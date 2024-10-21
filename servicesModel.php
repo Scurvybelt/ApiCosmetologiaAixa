@@ -17,11 +17,11 @@ class servicesModel{
         return $services;
     }
 
-    public function saveServices($name,$description,$price,$amount,$img){
+    public function saveServices($name,$description,$price,$img){
         $valida = $this->validateServices($name,$description,$price);
         $resultado=['error','Ya existe un producto las mismas características'];
         if(count($valida)==0){
-            $sql="INSERT INTO services(name,description,price,amount,img) VALUES('$name','$description','$price','$amount','$img')";
+            $sql="INSERT INTO services(name,description,price,img) VALUES('$name','$description','$price','$img')";
             mysqli_query($this->conexion,$sql);
             $resultado=['success','Producto guardado'];
         }

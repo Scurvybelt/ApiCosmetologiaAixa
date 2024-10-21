@@ -24,7 +24,7 @@ switch($_SERVER['REQUEST_METHOD']){
             $respuesta= ['error','El precio del producto no debe estar vacío, debe ser de tipo numérico y no tener más de 20 caracteres'];
         }
         else{
-            $respuesta = $servicesModel->saveServices($_POST->name,$_POST->description,$_POST->price,$_POST->amount,$_POST->img);
+            $respuesta = $servicesModel->saveServices($_POST->name,$_POST->description,$_POST->price,$_POST->img);
         }
         echo json_encode($respuesta);
     break;
