@@ -30,11 +30,11 @@ class servicesModel{
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function saveServices($name,$description,$price,$img){
+    public function saveServices($name,$description,$price,$category,$img){
         $valida = $this->validateServices($name,$description,$price);
         $resultado=['error','Ya existe un producto las mismas características'];
         if(count($valida)==0){
-            $sql="INSERT INTO services(name,description,price,img) VALUES('$name','$description','$price','$img')";
+            $sql="INSERT INTO services(name,description,price,category,img) VALUES('$name','$description','$price','$category',$img')";
             mysqli_query($this->conexion,$sql);
             $resultado=['success','Producto guardado'];
         }
@@ -70,6 +70,16 @@ class servicesModel{
     public function validateServices($name,$description,$price){
         $services=[];
         $sql="SELECT * FROM services WHERE name='$name' AND description='$description' AND price='$price' ";
+        $registos = mysqli_query($this->conexion,$sql);
+        while($row = mysqli_fetch_assoc($registos)){
+            array_push($services,$row);
+        }
+        return $services;
+    }
+
+    public function getServiceByCategory($category){
+        $services=[];
+        $sql = "SELECT * FROM services WHERE category='$category'";
         $registos = mysqli_query($this->conexion,$sql);
         while($row = mysqli_fetch_assoc($registos)){
             array_push($services,$row);
