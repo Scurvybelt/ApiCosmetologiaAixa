@@ -6,15 +6,28 @@ class servicesModel{
         mysqli_set_charset($this->conexion,'utf8');
     }
 
-    public function getServices($id=null){
-        $where = ($id == null) ? "" : " WHERE id='$id'";
-        $services=[];
-        $sql="SELECT * FROM services ".$where;
-        $registos = mysqli_query($this->conexion,$sql);
-        while($row = mysqli_fetch_assoc($registos)){
-            array_push($services,$row);
-        }
-        return $services;
+    public function getServices() {
+        $query = "SELECT * FROM services";
+        $result = $this->conexion->query($query);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getServicesById($id) {
+        $query = "SELECT * FROM services WHERE id = ?";
+        $stmt = $this->conexion->prepare($query);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    public function getServicesByCategory($category) {
+        $query = "SELECT * FROM services WHERE category = ?";
+        $stmt = $this->conexion->prepare($query);
+        $stmt->bind_param("s", $category);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 
     public function saveServices($name,$description,$price,$img){
