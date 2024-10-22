@@ -63,4 +63,14 @@ class servicesModel{
         }
         return $services;
     }
+
+    public function getServiceByCategory($category){
+        $services=[];
+        $sql = "SELECT * FROM services WHERE category='$category'";
+        $registos = mysqli_query($this->conexion,$sql);
+        while($row = mysqli_fetch_assoc($registos)){
+            array_push($services,$row);
+        }
+        return $services;
+    }
 }
