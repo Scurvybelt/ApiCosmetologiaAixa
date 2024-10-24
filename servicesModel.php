@@ -30,6 +30,24 @@ class servicesModel{
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getServicesByName($name) {
+        $query = "SELECT * FROM services WHERE name = ?";
+        $stmt = $this->conexion->prepare($query);
+        $stmt->bind_param("s", $name);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getServicesByNameAndCategory($name, $category) {
+        $query = "SELECT * FROM services WHERE name = ? AND category = ?";
+        $stmt = $this->conexion->prepare($query);
+        $stmt->bind_param("ss", $name, $category);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
     public function saveServices($name,$description,$price,$category,$img){
         $valida = $this->validateServices($name,$description,$price);
         $resultado=['error','Ya existe un producto las mismas características'];
