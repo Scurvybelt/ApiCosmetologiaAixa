@@ -8,7 +8,9 @@ require 'servicesModel.php';
 $servicesModel= new servicesModel();
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':
-        if (isset($_GET['name']) && isset($_GET['category'])) {
+        if (isset($_GET['id']) && isset($_GET['category'])) {
+            $respuesta = $servicesModel->getServicesByIdAndCategory($_GET['id'], $_GET['category']);
+        } else if (isset($_GET['name']) && isset($_GET['category'])) {
             $respuesta = $servicesModel->getServicesByNameAndCategory($_GET['name'], $_GET['category']);
         } else if (isset($_GET['name'])) {
             $respuesta = $servicesModel->getServicesByName($_GET['name']);
@@ -16,7 +18,7 @@ switch($_SERVER['REQUEST_METHOD']){
             $respuesta = $servicesModel->getServicesByCategory($_GET['category']);
         } else {
             $respuesta = (!isset($_GET['id'])) ? $servicesModel->getServices() : $servicesModel->getServicesById($_GET['id']);
-        } 
+        }
         echo json_encode($respuesta);
     break;
 

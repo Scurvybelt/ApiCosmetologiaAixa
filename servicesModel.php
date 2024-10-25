@@ -47,6 +47,15 @@ class servicesModel{
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function getServicesByIdAndCategory($id, $category) {
+        $query = "SELECT * FROM services WHERE id = ? AND category = ?";
+        $stmt = $this->conexion->prepare($query);
+        $stmt->bind_param("is", $id, $category);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
     
     public function saveServices($name,$description,$price,$category,$img){
         $valida = $this->validateServices($name,$description,$price);
