@@ -5,7 +5,14 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header("Allow: GET, POST, OPTIONS, PUT, DELETE");
 header('content-type: application/json; charset=utf-8');
 require 'servicesModel.php';
+
+
+
+
+
 $servicesModel= new servicesModel();
+
+$requestUri = $_SERVER['REQUEST_URI'];
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':
         if (isset($_GET['id']) && isset($_GET['category'])) {
@@ -24,17 +31,22 @@ switch($_SERVER['REQUEST_METHOD']){
 
     case 'POST':
         $_POST= json_decode(file_get_contents('php://input',true));
-        if(!isset($_POST->name) || is_null($_POST->name) || empty(trim($_POST->name)) || strlen($_POST->name) > 80){
-            $respuesta= ['error','El nombre del producto no debe estar vacío y no debe de tener más de 80 caracteres'];
-        }
-        else if(!isset($_POST->description) || is_null($_POST->description) || empty(trim($_POST->description)) || strlen($_POST->name) > 150){
-            $respuesta= ['error','La descripción del producto no debe estar vacía y no debe de tener más de 150 caracteres'];
-        }
-        else if(!isset($_POST->price) || is_null($_POST->price) || empty(trim($_POST->price)) || !is_numeric($_POST->price) || strlen($_POST->price) > 20){
-            $respuesta= ['error','El precio del producto no debe estar vacío, debe ser de tipo numérico y no tener más de 20 caracteres'];
-        }
-        else{
-            $respuesta = $servicesModel->saveServices($_POST->name,$_POST->description,$_POST->price,$_POST->img);
+
+        if(strpos($requestUri,'email') !== false){
+            $respuesta = $servicesModel->sendEmail($_POST->asunto,$_POST->email,$_POST->message,$_POST->name,$_POST->tel);
+        }else{
+            if(!isset($_POST->name) || is_null($_POST->name) || empty(trim($_POST->name)) || strlen($_POST->name) > 80){
+                $respuesta= ['error','El nombre del producto no debe estar vacío y no debe de tener más de 80 caracteres'];
+            }
+            else if(!isset($_POST->description) || is_null($_POST->description) || empty(trim($_POST->description)) || strlen($_POST->name) > 150){
+                $respuesta= ['error','La descripción del producto no debe estar vacía y no debe de tener más de 150 caracteres'];
+            }
+            else if(!isset($_POST->price) || is_null($_POST->price) || empty(trim($_POST->price)) || !is_numeric($_POST->price) || strlen($_POST->price) > 20){
+                $respuesta= ['error','El precio del producto no debe estar vacío, debe ser de tipo numérico y no tener más de 20 caracteres'];
+            }
+            else{
+                $respuesta = $servicesModel->saveServices($_POST->name,$_POST->description,$_POST->price,$_POST->img);
+            }
         }
         echo json_encode($respuesta);
     break;
