@@ -6,10 +6,6 @@ header("Allow: GET, POST, OPTIONS, PUT, DELETE");
 header('content-type: application/json; charset=utf-8');
 require 'servicesModel.php';
 
-
-
-
-
 $servicesModel= new servicesModel();
 
 $requestUri = $_SERVER['REQUEST_URI'];
