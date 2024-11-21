@@ -1,18 +1,40 @@
-use cosmetologia;
+-- Ensure proper database and character set
+CREATE DATABASE IF NOT EXISTS cosmetologia 
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
 
+USE cosmetologia;
+
+-- Set session variables for configuration
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+-- Drop existing table if it exists
 DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `password` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
+-- Create users table
+CREATE TABLE `users` (
+   `id` INT(11) NOT NULL AUTO_INCREMENT,
+   `user` VARCHAR(50) NOT NULL UNIQUE,
+   `password` VARCHAR(255) NOT NULL,
+   `email` VARCHAR(100) NULL,
+   `is_admin` BOOLEAN DEFAULT FALSE,
+   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   `last_login` TIMESTAMP NULL,
+   `active` BOOLEAN DEFAULT TRUE,
+
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `unique_username` (`user`)
+) ENGINE = InnoDB 
+  DEFAULT CHARSET = utf8mb4 
+  COLLATE = utf8mb4_unicode_ci;
+
+-- Create index for performance
+CREATE INDEX idx_username ON users(user);
+
+-- Set foreign key checks back to normal
 SET FOREIGN_KEY_CHECKS = 1;
 
--- Usuarios Administrativos
-INSERT INTO users (id, user, password) VALUES
-(1, 'admin', 'admin');
+-- Initial admin user (use a secure password in actual implementation)
+INSERT INTO users (user, password, email, is_admin, active) 
+VALUES ('admin', 'admin_password_hash', 'admin@yourdomain.com', TRUE, TRUE);
