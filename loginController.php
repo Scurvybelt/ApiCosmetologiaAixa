@@ -9,20 +9,23 @@ require 'loginModel.php';
 $loginModel = new loginModel();
 
 $requestUri = $_SERVER['REQUEST_URI'];
-$endpoint = explode('/', trim($requestUri, '/'))[0]; 
+
+
+
 
 switch($_SERVER['REQUEST_METHOD']){
     case 'POST':
         $_POST = json_decode(file_get_contents('php://input'), true);
-
+        
         // Inicio de Sesión
-        if (isset($_POST['username']) && isset($_POST['password'])) {
-            $respuesta = $loginModel->validateUser($_POST['username'], $_POST['password']);
+        if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email'])) {
+            $respuesta = $loginModel->saveUsers($_POST['username'], $_POST['password'], $_POST['email']);
             echo json_encode($respuesta);
         } 
         // Registro de nuevo usuario
-        else if (isset($_POST['user']) && isset($_POST['password']) && isset($_POST['email'])) {
-            $respuesta = $loginModel->saveUsers($_POST['user'], $_POST['password'], $_POST['email']);
+        
+        else if (isset($_POST['username']) && isset($_POST['password'])) {
+            $respuesta = $loginModel->validateUser($_POST['username'], $_POST['password']);
             echo json_encode($respuesta);
         } 
         else {
@@ -66,6 +69,8 @@ switch($_SERVER['REQUEST_METHOD']){
     break;
 
     case 'GET':
+        $endpoint = explode('/', trim($requestUri, '/'))[3]; 
+        
         switch($endpoint) {
             case 'users':
                 try {

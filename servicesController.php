@@ -9,8 +9,11 @@ require 'servicesModel.php';
 $servicesModel= new servicesModel();
 
 $requestUri = $_SERVER['REQUEST_URI'];
-switch($_SERVER['REQUEST_METHOD']){
+// $endpoint = explode('/', trim($requestUri, '/'))[3]; 
+
+switch($_SERVER['REQUEST_METHOD']){    
     case 'GET':
+        
         if (isset($_GET['id']) && isset($_GET['category'])) {
             $respuesta = $servicesModel->getServicesByIdAndCategory($_GET['id'], $_GET['category']);
         } else if (isset($_GET['name']) && isset($_GET['category'])) {
