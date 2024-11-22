@@ -51,21 +51,21 @@ switch($_SERVER['REQUEST_METHOD']){
     break;
 
     case 'PUT':
-        $_PUT= json_decode(file_get_contents('php://input',true));
-        if(!isset($_PUT->id) || is_null($_PUT->id) || empty(trim($_PUT->id))){
-            $respuesta= ['error','El ID del producto no debe estar vacío'];
-        }
-        else if(!isset($_PUT->name) || is_null($_PUT->name) || empty(trim($_PUT->name)) || strlen($_PUT->name) > 80){
-            $respuesta= ['error','El nombre del producto no debe estar vacío y no debe de tener más de 80 caracteres'];
-        }
-        else if(!isset($_PUT->description) || is_null($_PUT->description) || empty(trim($_PUT->description)) || strlen($_PUT->description) > 150){
-            $respuesta= ['error','La descripción del producto no debe estar vacía y no debe de tener más de 150 caracteres'];
-        }
-        else if(!isset($_PUT->price) || is_null($_PUT->price) || empty(trim($_PUT->price)) || !is_numeric($_PUT->price) || strlen($_PUT->price) > 20){
-            $respuesta= ['error','El precio del producto no debe estar vacío , debe ser de tipo numérico y no tener más de 20 caracteres'];
-        }
-        else{
-            $respuesta = $servicesModel->updateServices($_PUT->id,$_PUT->name,$_PUT->description,$_PUT->price);
+        $_PUT = json_decode(file_get_contents('php://input', true));
+        if (!isset($_PUT->id) || is_null($_PUT->id) || empty(trim($_PUT->id))) {
+            $respuesta = ['error', 'El ID del producto no debe estar vacío'];
+        } else if (!isset($_PUT->name) || is_null($_PUT->name) || empty(trim($_PUT->name)) || strlen($_PUT->name) > 80) {
+            $respuesta = ['error', 'El nombre del producto no debe estar vacío y no debe de tener más de 80 caracteres'];
+        } else if (!isset($_PUT->category) || is_null($_PUT->category) || empty(trim($_PUT->category))) {
+            $respuesta = ['error', 'La categoría del producto no debe estar vacía'];
+        } else if (!isset($_PUT->price) || is_null($_PUT->price) || empty(trim($_PUT->price)) || !is_numeric($_PUT->price) || strlen($_PUT->price) > 20) {
+            $respuesta = ['error', 'El precio del producto no debe estar vacío, debe ser de tipo numérico y no tener más de 20 caracteres'];
+        } else if (!isset($_PUT->description) || is_null($_PUT->description) || empty(trim($_PUT->description)) || strlen($_PUT->description) > 500) {
+            $respuesta = ['error', 'La descripción breve del producto no debe estar vacía y no debe de tener más de 500 caracteres'];
+        } else if (!isset($_PUT->information) || is_null($_PUT->information) || empty(trim($_PUT->information || strlen($_PUT->description) > 500))) {
+            $respuesta = ['error', 'La información detallada del producto no debe estar vacía y no debe de tener más de 500 caracteres'];
+        } else {
+            $respuesta = $servicesModel->updateServices($_PUT->id, $_PUT->name, $_PUT->category, $_PUT->price, $_PUT->description, $_PUT->information);
         }
         echo json_encode($respuesta);
     break;

@@ -70,22 +70,25 @@ class servicesModel{
         if(count($valida)==0){
             $sql="INSERT INTO services(name,description,price,category,img) VALUES('$name','$description','$price','$category',$img')";
             mysqli_query($this->conexion,$sql);
-            $resultado=['success','Producto guardado'];
+            $resultado=['success','Servicio guardado'];
         }
         return $resultado;
     }
 
-    public function updateServices($id,$name,$description,$price){
+    public function updateServices($id,$name,$category,$price,$description,$information){
         $existe= $this->getServices($id);
-        $resultado=['error','No existe el producto con ID '.$id];
+        $resultado=['error','No existe el servicio con ID'.$id];
         if(count($existe)>0){
-            $valida = $this->validateServices($name,$description,$price);
-            $resultado=['error','Ya existe un producto las mismas características'];
-            if(count($valida)==0){
-                $sql="UPDATE services SET name='$name',description='$description',price='$price' WHERE id='$id' ";
+            //$valida = $this->validateServices($name, $category);
+            //$resultado=['error','Ya existe un servicio con ese nombre en esa categoría'];
+            /*if(count($valida)==0){
+                $sql="UPDATE services SET name='$name', category='$category', price='$price', description='$description', information='$information' WHERE id='$id' ";
                 mysqli_query($this->conexion,$sql);
-                $resultado=['success','Producto actualizado'];
-            }
+                $resultado=['success','Servicio actualizado'];
+            }*/
+            $sql="UPDATE services SET name='$name', category='$category', price='$price', description='$description', information='$information' WHERE id='$id' ";
+                mysqli_query($this->conexion,$sql);
+                $resultado=['success','Servicio actualizado'];
         }
         return $resultado;
     }
@@ -96,14 +99,14 @@ class servicesModel{
         if(count($valida)>0){
             $sql="DELETE FROM services WHERE id='$id' ";
             mysqli_query($this->conexion,$sql);
-            $resultado=['success','Producto eliminado'];
+            $resultado=['success','Servicio eliminado'];
         }
         return $resultado;
     }
     
-    public function validateServices($name,$description,$price){
+    public function validateServices($name,$category){
         $services=[];
-        $sql="SELECT * FROM services WHERE name='$name' AND description='$description' AND price='$price' ";
+        $sql="SELECT * FROM services WHERE name='$name' AND category='$category'";
         $registos = mysqli_query($this->conexion,$sql);
         while($row = mysqli_fetch_assoc($registos)){
             array_push($services,$row);

@@ -184,7 +184,7 @@ class loginModel {
         }
         
         $user = $result->fetch_assoc();
-        
+
         if (!password_verify($password, $user['password'])) {
             return ['error', 'Contraseña incorrecta'];
         }
