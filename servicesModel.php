@@ -64,43 +64,63 @@ class servicesModel{
         return $result->fetch_all(MYSQLI_ASSOC);
     }
     
-    public function saveServices($name,$description,$price,$category,$img){
-        $valida = $this->validateServices($name,$description,$price);
-        $resultado=['error','Ya existe un producto las mismas características'];
-        if(count($valida)==0){
-            $sql="INSERT INTO services(name,description,price,category,img) VALUES('$name','$description','$price','$category',$img')";
-            mysqli_query($this->conexion,$sql);
-            $resultado=['success','Servicio guardado'];
+    public function saveServices($name, $category, $price, $description, $information) {
+        $valida = $this->validateServices($name, $category);
+        $resultado = ['error', 'Ya existe un servicio con ese nombre en esa categoría'];
+        if (count($valida) == 0) {
+            $sql = "INSERT INTO services (name, description, price, category, information) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("ssdss", $name, $description, $price, $category, $information);
+            $stmt->execute();
+            if ($stmt->affected_rows > 0) {
+                $resultado = ['success', 'Servicio creado exitosamente'];
+            } else {
+                $resultado = ['error', 'Error al crear el servicio'];
+            }
+            $stmt->close();
         }
         return $resultado;
     }
 
-    public function updateServices($id,$name,$category,$price,$description,$information){
-        $existe= $this->getServices($id);
-        $resultado=['error','No existe el servicio con ID'.$id];
-        if(count($existe)>0){
-            //$valida = $this->validateServices($name, $category);
-            //$resultado=['error','Ya existe un servicio con ese nombre en esa categoría'];
-            /*if(count($valida)==0){
-                $sql="UPDATE services SET name='$name', category='$category', price='$price', description='$description', information='$information' WHERE id='$id' ";
-                mysqli_query($this->conexion,$sql);
-                $resultado=['success','Servicio actualizado'];
-            }*/
-            $sql="UPDATE services SET name='$name', category='$category', price='$price', description='$description', information='$information' WHERE id='$id' ";
-                mysqli_query($this->conexion,$sql);
-                $resultado=['success','Servicio actualizado'];
+    public function updateServices($id, $name, $category, $price, $description, $information) {
+        $existe = $this->getServices($id);
+        $resultado = ['error', 'No existe el servicio con ID ' . $id];
+        if (count($existe) > 0) {
+            $sql = "UPDATE services SET name = ?, category = ?, price = ?, description = ?, information = ? WHERE id = ?";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("ssdssi", $name, $category, $price, $description, $information, $id);
+            $stmt->execute();
+            if ($stmt->affected_rows > 0) {
+                $resultado = ['success', 'Servicio actualizado'];
+            } else {
+                $resultado = ['error', 'Error al actualizar el servicio'];
+            }
+            $stmt->close();
         }
         return $resultado;
     }
     
     public function deleteServices($id){
         $valida = $this->getServices($id);
-        $resultado=['error','No existe el producto con ID '.$id];
-        if(count($valida)>0){
-            $sql="DELETE FROM services WHERE id='$id' ";
-            mysqli_query($this->conexion,$sql);
-            $resultado=['success','Servicio eliminado'];
+        $resultado = ['error', 'No existe el servicio con ID ' . $id];
+        
+        if (count($valida) > 0) {
+            $sql = "DELETE FROM services WHERE id = ?";
+            $stmt = $this->conexion->prepare($sql);
+            
+            if ($stmt) {
+                $stmt->bind_param('i', $id);
+                if ($stmt->execute()) {
+                    $resultado = ['success', 'Servicio eliminado'];
+                } else {
+                    $resultado = ['error', 'Error al eliminar el servicio'];
+                }
+                $stmt->close();
+            } else {
+                $resultado = ['error', 'Error al preparar la consulta'];
+            }
         }
+        
         return $resultado;
     }
     

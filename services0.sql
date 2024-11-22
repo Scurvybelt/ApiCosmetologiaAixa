@@ -9,7 +9,7 @@ CREATE TABLE `services`  (
   `name` varchar(80) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `description` varchar(510) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `price` decimal(20, 2) NULL DEFAULT NULL,
-  `img` varchar(255),
+  `img` varchar(255) NULL DEFAULT NULL,
   `category` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `information` varchar(510)  CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE

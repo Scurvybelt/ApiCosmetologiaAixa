@@ -29,22 +29,23 @@ switch($_SERVER['REQUEST_METHOD']){
     break;
 
     case 'POST':
-        $_POST= json_decode(file_get_contents('php://input',true));
+        $_POST = json_decode(file_get_contents('php://input', true));
 
-        if(strpos($requestUri,'email') !== false){
-            $respuesta = $servicesModel->sendEmail($_POST->asunto,$_POST->email,$_POST->message,$_POST->name,$_POST->tel);
-        }else{
-            if(!isset($_POST->name) || is_null($_POST->name) || empty(trim($_POST->name)) || strlen($_POST->name) > 80){
-                $respuesta= ['error','El nombre del producto no debe estar vacío y no debe de tener más de 80 caracteres'];
-            }
-            else if(!isset($_POST->description) || is_null($_POST->description) || empty(trim($_POST->description)) || strlen($_POST->name) > 150){
-                $respuesta= ['error','La descripción del producto no debe estar vacía y no debe de tener más de 150 caracteres'];
-            }
-            else if(!isset($_POST->price) || is_null($_POST->price) || empty(trim($_POST->price)) || !is_numeric($_POST->price) || strlen($_POST->price) > 20){
-                $respuesta= ['error','El precio del producto no debe estar vacío, debe ser de tipo numérico y no tener más de 20 caracteres'];
-            }
-            else{
-                $respuesta = $servicesModel->saveServices($_POST->name,$_POST->description,$_POST->price,$_POST->img);
+        if (strpos($requestUri, 'email') !== false) {
+            $respuesta = $servicesModel->sendEmail($_POST->asunto, $_POST->email, $_POST->message, $_POST->name, $_POST->tel);
+        } else {
+            if (!isset($_POST->name) || is_null($_POST->name) || empty(trim($_POST->name)) || strlen($_POST->name) > 60) {
+                $respuesta = ['error', 'El nombre del producto no debe estar vacío y no debe de tener más de 60 caracteres'];
+            } else if (!isset($_POST->category) || is_null($_POST->category) || empty(trim($_POST->category))) {
+                $respuesta = ['error', 'La categoría del producto no debe estar vacía'];
+            } else if (!isset($_POST->price) || is_null($_POST->price) || empty(trim($_POST->price)) || !is_numeric($_POST->price) || strlen($_POST->price) > 10) {
+                $respuesta = ['error', 'El precio del producto no debe estar vacío, debe ser de tipo numérico y no tener más de 10 caracteres'];
+            } else if (!isset($_POST->description) || is_null($_POST->description) || empty(trim($_POST->description)) || strlen($_POST->description) > 500) {
+                $respuesta = ['error', 'La descripción del producto no debe estar vacía y no debe de tener más de 500 caracteres'];
+            } else if (!isset($_POST->information) || is_null($_POST->information) || empty(trim($_POST->information || strlen($_POST->description) > 500))) {
+                $respuesta = ['error', 'La información del producto no debe estar vacía y no debe de tener más de 500 caracteres'];
+            } else {
+                $respuesta = $servicesModel->saveServices($_POST->name, $_POST->category, $_POST->price, $_POST->description, $_POST->information);
             }
         }
         echo json_encode($respuesta);
@@ -70,13 +71,36 @@ switch($_SERVER['REQUEST_METHOD']){
         echo json_encode($respuesta);
     break;
 
-    case 'DELETE';
-        $_DELETE= json_decode(file_get_contents('php://input',true));
-        if(!isset($_DELETE->id) || is_null($_DELETE->id) || empty(trim($_DELETE->id))){
-            $respuesta= ['error','El ID del producto no debe estar vacío'];
+    case 'DELETE':
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: DELETE, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type');
+    
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            exit(0);
         }
-        else{
-            $respuesta = $servicesModel->deleteServices($_DELETE->id);
+    
+        $input = file_get_contents('php://input');
+        
+        $_DELETE = json_decode($input, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $respuesta = ['error', 'Error al decodificar los datos de entrada: ' . json_last_error_msg()];
+        } else {
+            if (!isset($_DELETE['id']) || is_null($_DELETE['id']) || empty(trim($_DELETE['id']))) {
+                $respuesta = ['error', 'El ID del servicio no debe estar vacío'];
+            } else {
+                try {
+                    $respuesta = $servicesModel->deleteServices($_DELETE['id']);
+                    
+                    if (empty($respuesta)) {
+                        $respuesta = ['success', 'Servicio eliminado correctamente'];
+                    }
+                } catch (Exception $e) {
+                    $respuesta = ['error', 'Error al eliminar el servicio: ' . $e->getMessage()];
+                }
+            }
         }
         echo json_encode($respuesta);
     break;
